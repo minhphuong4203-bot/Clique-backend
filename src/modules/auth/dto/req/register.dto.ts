@@ -1,64 +1,20 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsString,
-  IsNotEmpty,
-  MinLength,
-  IsOptional,
-  IsEnum,
-} from 'class-validator';
-import { Gender, GradeLevel } from '@prisma/client';
-import { Transform } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsString, IsNotEmpty, MinLength } from 'class-validator';
 
 export class RegisterDto {
-  @ApiProperty({
-    description: 'User email address',
-    example: 'user@example.com',
-  })
-  @IsEmail({}, { message: 'Please provide a valid email address' })
+  @ApiProperty({ example: 'user@example.com' })
+  @IsEmail({}, { message: 'Email không hợp lệ' })
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({
-    description: 'User full name',
-    example: 'John Doe',
-  })
+  @ApiProperty({ example: 'Nguyễn Văn A' })
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({
-    description: 'User password (min 8 characters)',
-    example: 'Password123',
-  })
+  @ApiProperty({ example: 'Password123', minLength: 6 })
   @IsString()
-  @MinLength(6, { message: 'Password must be at least 8 characters long' })
+  @MinLength(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' })
   @IsNotEmpty()
   password: string;
-
-  @ApiPropertyOptional({
-    description: 'User date of birth',
-    example: '2015-01-15',
-  })
-  @IsOptional()
-  @Transform(({ value }) => (value ? new Date(value) : undefined))
-  dob?: Date;
-
-  @ApiPropertyOptional({
-    description: 'User gender',
-    enum: Gender,
-    example: Gender.MALE,
-  })
-  @IsEnum(Gender)
-  @IsOptional()
-  gender?: Gender;
-
-  @ApiPropertyOptional({
-    description: 'User grade level',
-    enum: GradeLevel,
-    example: GradeLevel.GRADE_1,
-  })
-  @IsEnum(GradeLevel)
-  @IsOptional()
-  grade?: GradeLevel;
 }

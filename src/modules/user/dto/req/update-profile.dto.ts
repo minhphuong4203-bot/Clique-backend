@@ -1,53 +1,31 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Gender, GradeLevel } from '@prisma/client';
-import {
-  IsOptional,
-  IsString,
-  IsEnum,
-  IsDateString,
-  MinLength,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { Gender } from '@prisma/client';
 
 export class UpdateProfileDto {
-  @ApiPropertyOptional({
-    example: 'John Doe',
-    description: 'User full name',
-  })
+  @ApiProperty({ example: 'Nguyễn Văn A', required: false })
   @IsOptional()
   @IsString()
-  @MinLength(2, { message: 'Tên phải có ít nhất 2 ký tự' })
   name?: string;
 
-  @ApiPropertyOptional({
-    example: GradeLevel.GRADE_1,
-    enum: GradeLevel,
-    description: 'User grade level',
-  })
+  @ApiProperty({ example: 25, minimum: 18, maximum: 99, required: false })
   @IsOptional()
-  @IsEnum(GradeLevel, { message: 'Khối lớp không hợp lệ' })
-  grade?: GradeLevel;
+  @IsInt()
+  @Min(18)
+  @Max(99)
+  age?: number;
 
-  @ApiPropertyOptional({
-    example: '2015-01-15',
-    description: 'Date of birth in ISO format',
-  })
+  @ApiProperty({ enum: Gender, required: false })
   @IsOptional()
-  @IsDateString({}, { message: 'Ngày sinh không hợp lệ' })
-  dob?: string;
-
-  @ApiPropertyOptional({
-    example: Gender.MALE,
-    enum: Gender,
-    description: 'User gender',
-  })
-  @IsOptional()
-  @IsEnum(Gender, { message: 'Giới tính không hợp lệ' })
+  @IsEnum(Gender)
   gender?: Gender;
 
-  @ApiPropertyOptional({
-    example: 'https://res.cloudinary.com/...',
-    description: 'Avatar URL (will be uploaded to Cloudinary)',
-  })
+  @ApiProperty({ example: 'Yêu thích cà phê và những buổi chiều thong thả', required: false })
+  @IsOptional()
+  @IsString()
+  bio?: string;
+
+  @ApiProperty({ example: 'https://...', required: false })
   @IsOptional()
   @IsString()
   avatarUrl?: string;

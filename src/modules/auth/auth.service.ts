@@ -15,7 +15,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto) {
     const existingUser = await this.prisma.user.findUnique({
@@ -23,20 +23,17 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+      throw new ConflictException('Email đã được sử dụng');
     }
 
-    const hashedPassword = await this.hashPassword(registerDto.password);
+    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
     const newUser = await this.prisma.user.create({
       data: {
         email: registerDto.email,
         name: registerDto.name,
         passwordHash: hashedPassword,
-        dob: registerDto.dob,
-        gender: registerDto.gender,
-        grade: registerDto.grade,
-        isVerified: false,
+        isVerified: true, // Auto-verify for simple demo
       },
     });
 
@@ -46,32 +43,25 @@ export class AuthService {
         email: newUser.email,
         name: newUser.name,
         role: newUser.role,
-        avatarUrl: newUser.avatarUrl || undefined,
-        dob: newUser.dob || undefined,
-        gender: newUser.gender,
-        isVerified: newUser.isVerified ?? false,
+        isVerified: newUser.isVerified,
       },
     };
   }
 
   async login(email: string, password: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
+    const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user || !user.passwordHash) {
-      throw new ForbiddenException('Access Denied');
+      throw new ForbiddenException('Email hoặc mật khẩu không đúng');
     }
 
     const passwordMatches = await bcrypt.compare(password, user.passwordHash);
     if (!passwordMatches) {
-      throw new ForbiddenException('Access Denied');
+      throw new ForbiddenException('Email hoặc mật khẩu không đúng');
     }
 
     if (!user.isVerified) {
-      throw new ForbiddenException(
-        'Email not verified. Please verify your email before logging in.',
-      );
+      throw new ForbiddenException('Tài khoản chưa được xác thực');
     }
 
     const tokens = await this.generateTokens(user.id, user.email, user.role);
@@ -83,68 +73,42 @@ export class AuthService {
         name: user.name,
         role: user.role,
         avatarUrl: user.avatarUrl || undefined,
-        dob: user.dob || undefined,
-        gender: user.gender,
+        age: user.age || undefined,
+        gender: user.gender || undefined,
+        bio: user.bio || undefined,
       },
       tokens,
     };
   }
 
   async refreshTokens(userId: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
     if (!user) {
       throw new ForbiddenException('Access Denied');
     }
 
-    // Generate new tokens
-    const tokens = await this.generateTokens(user.id, user.email, user.role);
-
-    return tokens;
+    return this.generateTokens(user.id, user.email, user.role);
   }
 
   private async generateTokens(userId: number, email: string, role: string) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
-        {
-          sub: userId,
-          email,
-          role,
-        },
+        { sub: userId, email, role },
         {
           secret: this.configService.get<string>('ACCESS_TOKEN_SECRET'),
-          expiresIn: this.configService.get<string>(
-            'ACCESS_TOKEN_EXPIRATION_TIME',
-            '7d',
-          ),
+          expiresIn: this.configService.get<string>('ACCESS_TOKEN_EXPIRATION_TIME', '15m'),
         },
       ),
       this.jwtService.signAsync(
-        {
-          sub: userId,
-          email,
-          role,
-        },
+        { sub: userId, email, role },
         {
           secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
-          expiresIn: this.configService.get<string>(
-            'REFRESH_TOKEN_EXPIRATION_TIME',
-            '30d',
-          ),
+          expiresIn: this.configService.get<string>('REFRESH_TOKEN_EXPIRATION_TIME', '7d'),
         },
       ),
     ]);
 
-    return {
-      accessToken,
-      refreshToken,
-    };
-  }
-
-  private async hashPassword(password: string): Promise<string> {
-    const saltRounds = 10;
-    return bcrypt.hash(password, saltRounds);
+    return { accessToken, refreshToken };
   }
 }

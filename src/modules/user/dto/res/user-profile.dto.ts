@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Gender, GradeLevel, UserRole } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
+import { Gender } from '@prisma/client';
 
 export class UserProfileDto {
   @ApiProperty({ example: 1 })
@@ -8,61 +8,33 @@ export class UserProfileDto {
   @ApiProperty({ example: 'user@example.com' })
   email: string;
 
-  @ApiProperty({ example: 'John Doe' })
+  @ApiProperty({ example: 'Nguyễn Văn A' })
   name: string;
 
-  @ApiProperty({
-    example: UserRole.LEARNER,
-    enum: UserRole,
-  })
-  role: UserRole;
+  @ApiProperty({ example: 25, required: false })
+  age?: number;
 
-  @ApiPropertyOptional({ example: 'https://example.com/avatar.jpg' })
-  avatarUrl?: string;
-
-  @ApiPropertyOptional({ example: '2015-01-15T00:00:00.000Z' })
-  dob?: Date;
-
-  @ApiPropertyOptional({
-    example: Gender.MALE,
-    enum: Gender,
-  })
+  @ApiProperty({ enum: Gender, required: false })
   gender?: Gender;
 
-  @ApiProperty({ example: 1500 })
-  xp: number;
+  @ApiProperty({ example: 'Yêu thích cà phê và những buổi chiều thong thả', required: false })
+  bio?: string;
 
-  @ApiProperty({ example: 5 })
-  streakDays: number;
+  @ApiProperty({ example: 'https://res.cloudinary.com/...', required: false })
+  avatarUrl?: string;
 
-  @ApiProperty({ example: true })
-  isActive: boolean;
-
-  @ApiProperty({
-    example: GradeLevel.GRADE_1,
-    enum: GradeLevel,
-  })
-  grade: GradeLevel;
+  @ApiProperty({ example: 'USER' })
+  role: string;
 
   @ApiProperty({ example: true })
   isVerified: boolean;
 
-  @ApiProperty({ example: '2024-01-01T00:00:00.000Z' })
+  @ApiProperty({ example: true })
+  isActive: boolean;
+
+  @ApiProperty()
   createdAt: Date;
 
-  @ApiProperty({ example: '2024-01-01T00:00:00.000Z' })
+  @ApiProperty()
   updatedAt: Date;
-
-  @ApiProperty({
-    example: {
-      attempts: 25,
-      xpLogs: 50,
-      streakLogs: 5,
-    },
-  })
-  _count: {
-    attempts: number;
-    xpLogs: number;
-    streakLogs: number;
-  };
 }
