@@ -16,9 +16,10 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
-      'https://4kidstudy-frontend.vercel.app',
-      'https://4kidstudy-frontend-git-dev2-atuandev-projects.vercel.app',
-      'https://4kidstudy-frontend-git-dev-atuandev-projects.vercel.app',
+      'https://clique-frontend.vercel.app',
+      'https://clique-frontend-git-dev2-atuandev-projects.vercel.app',
+      'https://clique-frontend-git-dev-atuandev-projects.vercel.app',
+      'https://clique-frontend-one.vercel.app',
     ].filter(Boolean),
     credentials: true,
   });
