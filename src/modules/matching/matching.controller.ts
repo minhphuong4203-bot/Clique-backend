@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, ParseIntPipe, UseGuards, Req, Body } from '@nestjs/common';
+import { Controller, Post, Get, Param, ParseIntPipe, UseGuards, Req, Body, Delete } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { MatchingService } from './matching.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -50,5 +50,14 @@ export class MatchingController {
         @Body() dto: SubmitAvailabilityDto
     ) {
         return this.matchingService.submitAvailability(req.user.id, matchId, dto);
+    }
+
+    @Delete('availability/:id')
+    @ApiOperation({ summary: 'Delete a specific availability slot' })
+    async deleteAvailability(
+        @Req() req: any,
+        @Param('id', ParseIntPipe) id: number
+    ) {
+        return this.matchingService.deleteAvailability(req.user.id, id);
     }
 }

@@ -153,11 +153,6 @@ export class MatchingService {
             throw new BadRequestException('Bản lưu match này không thuộc về bạn.');
         }
 
-        // Xóa các availability cũ của user này trong match
-        await this.prisma.availability.deleteMany({
-            where: { matchId, userId }
-        });
-
         // Thêm các khoảng rảnh mới
         if (dto.slots && dto.slots.length > 0) {
             await this.prisma.availability.createMany({
@@ -180,15 +175,19 @@ export class MatchingService {
             }
         });
 
-        // Kiểm tra xem cả hai đã submit chưa
-        const updatedMatch = await this.prisma.match.findUnique({ where: { id: matchId } });
-        if (updatedMatch && updatedMatch.userAAvailabilitySubmitted && updatedMatch.userBAvailabilitySubmitted) {
+        // Kiểm tra xem cả hai có lịch rảnh chưa
+        const updatedMatch = await this.prisma.match.findUnique({
+            where: { id: matchId },
+            include: { availabilities: true }
+        });
+        const hasA = updatedMatch?.availabilities?.some((a: any) => a.userId === updatedMatch.userAId);
+        const hasB = updatedMatch?.availabilities?.some((a: any) => a.userId === updatedMatch.userBId);
+
+        if (hasA && hasB) {
             return await this.checkAndFindCommonSlot(matchId);
         }
 
-        return { message: 'Đã lưu thời gian rảnh. Đang chờ đối phương chọn...', match: updatedMatch };
-
-        return { message: 'Đã lưu thời gian rảnh. Đang chờ đối phương chọn...', match: updatedMatch };
+        return { message: 'Đã thêm thời gian rảnh. Đang chờ đối phương...', match: updatedMatch };
     }
 
     /**
@@ -241,22 +240,26 @@ export class MatchingService {
                 dateScheduledAt: commonSlot
             };
         } else {
-            // Reset status để họ chọn lại
-            await this.prisma.match.update({
-                where: { id: matchId },
-                data: {
-                    userAAvailabilitySubmitted: false,
-                    userBAvailabilitySubmitted: false,
-                    dateScheduledAt: null,
-                }
-            });
-            await this.prisma.availability.deleteMany({ where: { matchId } });
-
+            // Không xóa availability, yêu cầu thử lại
             return {
                 isCommonSlotFound: false,
-                message: 'Chưa tìm được thời gian trùng. Vui lòng chọn lại.',
+                message: 'Chưa tìm được thời gian trùng. Vui lòng thêm lịch!',
                 dateScheduledAt: null
             };
         }
+    }
+
+    /**
+     * Delete an availability slot
+     */
+    async deleteAvailability(userId: number, availabilityId: number) {
+        const availability = await this.prisma.availability.findUnique({ where: { id: availabilityId } });
+        if (!availability || availability.userId !== userId) {
+            throw new NotFoundException('Không tìm thấy thời gian rảnh hoặc bạn không có quyền xóa');
+        }
+        await this.prisma.availability.delete({ where: { id: availabilityId } });
+
+        // Nếu cần check lại common slot nếu xóa xong, tuy nhiên ở đây chỉ đơn giản là xóa
+        return { message: 'Đã xóa thời gian rảnh' };
     }
 }
