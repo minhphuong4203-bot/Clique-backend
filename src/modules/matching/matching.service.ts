@@ -250,6 +250,34 @@ export class MatchingService {
     }
 
     /**
+     * Update an availability slot and re-check for common slots
+     */
+    async updateAvailability(userId: number, availabilityId: number, dto: SubmitAvailabilityDto) {
+        const availability = await this.prisma.availability.findUnique({ where: { id: availabilityId } });
+        if (!availability || availability.userId !== userId) {
+            throw new NotFoundException('Không tìm thấy thời gian rảnh hoặc bạn không có quyền sửa');
+        }
+
+        if (!dto.slots || dto.slots.length === 0) {
+            throw new NotFoundException('Dữ liệu sửa không hợp lệ');
+        }
+
+        const updatedSlot = dto.slots[0];
+
+        await this.prisma.availability.update({
+            where: { id: availabilityId },
+            data: {
+                date: new Date(updatedSlot.date),
+                startTime: new Date(updatedSlot.startTime),
+                endTime: new Date(updatedSlot.endTime),
+            }
+        });
+
+        // Re-check for common slot after update
+        return await this.checkAndFindCommonSlot(availability.matchId);
+    }
+
+    /**
      * Delete an availability slot
      */
     async deleteAvailability(userId: number, availabilityId: number) {

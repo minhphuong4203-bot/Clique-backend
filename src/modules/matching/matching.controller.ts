@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, ParseIntPipe, UseGuards, Req, Body, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Param, ParseIntPipe, UseGuards, Req, Body, Delete, Put } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { MatchingService } from './matching.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -50,6 +50,20 @@ export class MatchingController {
         @Body() dto: SubmitAvailabilityDto
     ) {
         return this.matchingService.submitAvailability(req.user.id, matchId, dto);
+    }
+
+    @Put('availability/:id')
+    @ApiOperation({ summary: 'Update a specific availability slot' })
+    async updateAvailability(
+        @Req() req: any,
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: SubmitAvailabilityDto
+    ) {
+        // Here we can re-use SubmitAvailabilityDto or a part of it.
+        // For simplicity, we assume we update one slot at a time, but the dto expects an array.
+        // Wait, if it's one slot, the DTO could just be the start/end time, or we can use the same array but just take the first element.
+        // Let's create an inline type or just use any for now to keep it simple, or define it in service.
+        return this.matchingService.updateAvailability(req.user.id, id, dto);
     }
 
     @Delete('availability/:id')
