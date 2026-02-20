@@ -1,7 +1,8 @@
-import { Controller, Post, Get, Param, ParseIntPipe, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Get, Param, ParseIntPipe, UseGuards, Req, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { MatchingService } from './matching.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { SubmitAvailabilityDto } from './dto/submit-availability.dto';
 
 @ApiTags('matching')
 @ApiBearerAuth()
@@ -30,5 +31,24 @@ export class MatchingController {
     @ApiOperation({ summary: 'Get all matched profiles for current user' })
     async getMyMatches(@Req() req: any) {
         return this.matchingService.getMyMatches(req.user.id);
+    }
+
+    @Get('matches/:matchId')
+    @ApiOperation({ summary: 'Get a specific match details' })
+    async getMatch(
+        @Req() req: any,
+        @Param('matchId', ParseIntPipe) matchId: number
+    ) {
+        return this.matchingService.getMatch(matchId, req.user.id);
+    }
+
+    @Post('matches/:matchId/availability')
+    @ApiOperation({ summary: 'Submit availability times for a match' })
+    async submitAvailability(
+        @Req() req: any,
+        @Param('matchId', ParseIntPipe) matchId: number,
+        @Body() dto: SubmitAvailabilityDto
+    ) {
+        return this.matchingService.submitAvailability(req.user.id, matchId, dto);
     }
 }
