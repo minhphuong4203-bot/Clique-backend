@@ -1,0 +1,156 @@
+// Mini Dating App - Clique83
+// Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum LikeStatus {
+  LIKED
+  PASSED
+}
+
+enum MatchStatus {
+  PENDING     // chưa cả hai đều like
+  MATCHED     // cả hai đã like nhau
+}
+
+// ─────────────────────────────────────────────
+// PHẦN A – USER PROFILE
+// ─────────────────────────────────────────────
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  passwordHash String?
+  avatarUrl    String?
+
+  // Profile dating
+  age          Int?
+  gender       Gender?
+  bio          String?  @db.Text
+
+  role         UserRole @default(USER)
+  isVerified   Boolean  @default(false)
+  isActive     Boolean  @default(true)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Quan hệ – Like (người gửi)
+  likesSent     Like[]  @relation("SentLikes")
+  // Quan hệ – Like (người nhận)
+  likesReceived Like[]  @relation("ReceivedLikes")
+
+  // Quan hệ – Match
+  matchesAsA    Match[] @relation("MatchUserA")
+  matchesAsB    Match[] @relation("MatchUserB")
+
+  // Quan hệ – Availability
+  availabilities Availability[]
+
+  @@index([role])
+  @@index([isActive])
+}
+
+// ─────────────────────────────────────────────
+// PHẦN B – LIKE & MATCH
+// ─────────────────────────────────────────────
+
+// Bảng Like: User A like/pass User B
+model Like {
+  id         Int        @id @default(autoincrement())
+
+  fromUserId Int
+  fromUser   User       @relation("SentLikes", fields: [fromUserId], references: [id], onDelete: Cascade)
+
+  toUserId   Int
+  toUser     User       @relation("ReceivedLikes", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  status     LikeStatus @default(LIKED)
+  createdAt  DateTime   @default(now())
+
+  @@unique([fromUserId, toUserId])
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@index([toUserId, status])
+}
+
+// Bảng Match: tạo khi cả hai đều like nhau
+// Convention: userAId < userBId (để tránh trùng cặp)
+model Match {
+  id      Int         @id @default(autoincrement())
+
+  userAId Int
+  userA   User        @relation("MatchUserA", fields: [userAId], references: [id], onDelete: Cascade)
+
+  userBId Int
+  userB   User        @relation("MatchUserB", fields: [userBId], references: [id], onDelete: Cascade)
+
+  status  MatchStatus @default(MATCHED)
+
+  // Trạng thái chọn availability
+  userAAvailabilitySubmitted Boolean @default(false)
+  userBAvailabilitySubmitted Boolean @default(false)
+
+  // Kết quả slot hẹn (sau khi tìm được slot trùng)
+  dateScheduledAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  availabilities Availability[]
+
+  @@unique([userAId, userBId])
+  @@index([userAId])
+  @@index([userBId])
+  @@index([status])
+}
+
+// ─────────────────────────────────────────────
+// PHẦN C – AVAILABILITY & SCHEDULING
+// ─────────────────────────────────────────────
+
+// Mỗi bản ghi = một khoảng thời gian rảnh của user trong 1 match cụ thể
+model Availability {
+  id      Int @id @default(autoincrement())
+
+  matchId Int
+  match   Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  userId  Int
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Khoảng thời gian rảnh: date + from-to
+  date      DateTime // ngày (chỉ dùng phần ngày, ignore time)
+  startTime DateTime // datetime đầy đủ cho giờ bắt đầu
+  endTime   DateTime // datetime đầy đủ cho giờ kết thúc
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([matchId, userId])
+  @@index([matchId])
+  @@index([userId])
+}
