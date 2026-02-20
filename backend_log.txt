@@ -1,0 +1,37 @@
+
+> 4kidstudy-backend@0.0.1 start:dev D:\svNam4\HK2\Clique\Clique-backend
+> nest start --watch
+
+[2J[3J[H[[90m1:20:13 PM[0m] Starting compilation in watch mode...
+
+[[90m1:20:17 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +15ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMatchingModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/api}:[39m[38;5;3m +24ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/register, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/refresh, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/me, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/me/change-password, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mMatchingController {/api/matching}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/matching/like/:userId, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/matching/likes, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/matching/matches, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 6232  - [39m02/20/2026, 1:20:18 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +16ms[39m
+Application is running on: http://localhost:3001
+Swagger documentation available at: http://localhost:3001/api/docs
