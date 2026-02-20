@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { Type } from 'class-transformer';
 import { Gender } from '@prisma/client';
 
 export class UpdateProfileDto {
@@ -10,6 +11,7 @@ export class UpdateProfileDto {
 
   @ApiProperty({ example: 25, minimum: 18, maximum: 99, required: false })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(18)
   @Max(99)
